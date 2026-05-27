@@ -43,7 +43,7 @@ impl GRepo {
             .filter_map(move |oid| repo_ref.find_commit(oid).ok()))
     }
 
-    pub fn get_commiters(&self) -> Result<HashSet<String>, git2::Error> {
+    pub fn get_authors(&self) -> Result<HashSet<String>, git2::Error> {
         let mut authors: HashSet<String> = HashSet::new();
         for commit in self.iter_commits()? {
             let commiter = commit.author();
@@ -57,11 +57,12 @@ impl GRepo {
 
     pub fn get_author_commits(
         &self,
-        email: String,
+        email: &str,
     ) -> Result<impl Iterator<Item = Commit<'_>>, git2::Error> {
+        let email_owned = email.to_string();
         let iter = self
             .iter_commits()?
-            .filter(move |commit| commit.author().email().map_or(false, |e| e == email));
+            .filter(move |commit| commit.author().email().map_or(false, |e| e == email_owned));
 
         Ok(iter)
     }

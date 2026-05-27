@@ -31,7 +31,7 @@ impl GRepo {
 
     pub fn get_lifetime_contributions(&self, email: String) -> Result<Contribution, git2::Error> {
         let mut contrib = Contribution::default();
-        for commit in self.get_author_commits(email)? {
+        for commit in self.get_author_commits(&email)? {
             let diff = self.get_parent_diff(&commit)?;
             let stats = diff.stats()?;
             contrib.add_stats(stats);

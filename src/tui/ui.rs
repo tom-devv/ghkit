@@ -1,38 +1,53 @@
 use ratatui::{
+    Frame,
+    layout::{Constraint, Layout, Rect},
     style::{Color, Modifier, Style},
-    widgets::Tabs,
+    widgets::{Block, BorderType, Borders, Tabs},
 };
 
-use crate::tui::state::State;
+use crate::tui::{page::Page, state::TuiState};
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Default)]
-pub enum Page {
-    #[default]
-    Overview = 0, // Numbering is for easy recogonition of order on the top bar
-    Cadence = 1,
-    Todo = 2,
-}
+pub fn render(frame: &mut Frame, state: &mut TuiState) {
+    let chunks = Layout::vertical([Constraint::Length(Page::size() as u16), Constraint::Min(0)])
+        .horizontal_margin(2)
+        .vertical_margin(1)
+        .split(frame.area());
 
-impl Page {
-    pub const ALL: [Page; 3] = [Page::Overview, Page::Cadence, Page::Todo];
+    render_tabs(frame, &state, chunks[0]);
 
-    pub fn to_tab(&self) -> &'static str {
-        match self {
-            Page::Overview => "Overview",
-            Page::Cadence => "Cadence",
-            Page::Todo => "Todo",
-        }
-    }
-
-    pub fn size() -> usize {
-        Self::ALL.len()
+    match state.active_page {
+        Page::Overview => state.overview.render(frame, chunks[1]),
+        Page::Cadence => state.cadence.render(frame, chunks[1]),
+        Page::Todo => {}
     }
 }
 
-pub fn nav(state: &State) -> Tabs<'static> {
+fn render_tabs(frame: &mut Frame, state: &TuiState, chunk: Rect) {
+    let nav_block = Block::bordered()
+        .border_style(Color::Gray)
+        .title("< Ghkit: {Version} >")
+        .title_alignment(ratatui::layout::HorizontalAlignment::Center);
+
+    let nav_tabs = nav(state).block(nav_block);
+
+    frame.render_widget(nav_tabs, chunk);
+}
+
+pub fn draw_placeholder(frame: &mut Frame, area: Rect, label: &str, color: Color) {
+    let placeholder = Block::default()
+        .borders(Borders::ALL)
+        .border_type(BorderType::Rounded)
+        .border_style(Style::default().fg(color))
+        .title(format!(" {} ({}x{}) ", label, area.width, area.height))
+        .title_style(Style::default().fg(color));
+
+    frame.render_widget(placeholder, area);
+}
+
+pub fn nav(state: &TuiState) -> Tabs<'static> {
     let tab_titles = Page::ALL.iter().map(|page| page.to_tab());
     let tabs = Tabs::new(tab_titles)
-        .select(state.page as usize)
+        .select(state.active_page as usize)
         .style(Style::default().fg(Color::DarkGray))
         .highlight_style(
             Style::default()

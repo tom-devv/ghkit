@@ -1,19 +1,18 @@
 use ratatui::widgets::{Block, Borders};
 
-use crate::{metrics::RenderMetric, tui::state::State};
+pub struct OverviewPage {
+    pub data: OverviewData,
+}
 
 #[derive(Default)]
-pub struct OverviewMetric {}
+pub struct OverviewData {}
 
-impl RenderMetric for OverviewMetric {
-    fn update(&mut self, _key: crossterm::event::KeyCode) {}
+impl OverviewPage {
+    pub fn new(data: OverviewData) -> Self {
+        Self { data }
+    }
 
-    fn render(
-        &self,
-        frame: &mut ratatui::prelude::Frame,
-        area: ratatui::prelude::Rect,
-        _state: &State,
-    ) {
+    pub fn render(&self, frame: &mut ratatui::prelude::Frame, area: ratatui::prelude::Rect) {
         let block_widg = Block::default()
             .title("Overview")
             .title_alignment(ratatui::layout::HorizontalAlignment::Center)

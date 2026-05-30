@@ -14,6 +14,8 @@ pub enum Page {
 }
 
 impl Page {
+    pub const ALL: [Page; 3] = [Page::Overview, Page::Cadence, Page::Todo];
+
     pub fn to_tab(&self) -> &'static str {
         match self {
             Page::Overview => "Overview",
@@ -22,14 +24,13 @@ impl Page {
         }
     }
 
-    pub fn size() -> u16 {
-        3 // todo fix this?
+    pub fn size() -> usize {
+        Self::ALL.len()
     }
 }
 
 pub fn nav(state: &State) -> Tabs<'static> {
-    let ordered_pages = [Page::Overview, Page::Cadence, Page::Todo];
-    let tab_titles = ordered_pages.iter().map(|page| page.to_tab());
+    let tab_titles = Page::ALL.iter().map(|page| page.to_tab());
     let tabs = Tabs::new(tab_titles)
         .select(state.page as usize)
         .style(Style::default().fg(Color::DarkGray))

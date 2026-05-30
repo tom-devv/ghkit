@@ -1,6 +1,8 @@
 use clap::Parser;
 use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyModifiers},
+    event::{
+        self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyEventKind, KeyModifiers,
+    },
     terminal::{self, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use std::{io, panic, time::Duration};
@@ -83,9 +85,22 @@ pub fn tui(
     while !state.is_quit {
         terminal.draw(|frame| render(frame, &state))?;
 
-        // DELETE
         if event::poll(Duration::from_millis(16))? {
             if let Event::Key(key) = event::read()? {
+                if key.kind == KeyEventKind::Press {
+                    match key.code {
+                        KeyCode::Tab => state.tab(),
+                        _ => match state.page {
+                            Page::Overview => {}
+                            Page::Cadence => {
+                                if let Some(cadence) = &mut state.cadence {
+                                    cadence.update(key.code);
+                                }
+                            }
+                            Page::Todo => {}
+                        },
+                    };
+                };
                 let is_ctrl_c =
                     key.code == KeyCode::Char('c') && key.modifiers.contains(KeyModifiers::CONTROL);
                 let is_q = key.code == KeyCode::Char('q');
@@ -93,10 +108,6 @@ pub fn tui(
                 if is_ctrl_c || is_q {
                     state.is_quit = true;
                     break;
-                }
-
-                if key.code == KeyCode::Tab {
-                    state.tab();
                 }
             }
         }
@@ -106,7 +117,7 @@ pub fn tui(
 }
 
 pub fn render(frame: &mut Frame, state: &State) {
-    let chunks = Layout::vertical([Constraint::Length(Page::size()), Constraint::Min(0)])
+    let chunks = Layout::vertical([Constraint::Length(Page::size() as u16), Constraint::Min(0)])
         .horizontal_margin(2)
         .vertical_margin(1)
         .split(frame.area());

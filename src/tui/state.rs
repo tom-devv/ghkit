@@ -20,13 +20,12 @@ impl State {
         }
     }
 
-    pub fn tab(&mut self) -> Page {
+    pub fn tab(&mut self) {
         let next_page = match self.page {
             Page::Overview => Page::Cadence,
             Page::Cadence => Page::Todo,
             Page::Todo => Page::Overview,
         };
         self.page = next_page;
-        next_page
     }
 }

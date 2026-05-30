@@ -6,6 +6,8 @@ use crate::{metrics::RenderMetric, tui::state::State};
 pub struct OverviewMetric {}
 
 impl RenderMetric for OverviewMetric {
+    fn update(&mut self, key: crossterm::event::KeyCode) {}
+
     fn render(
         &self,
         frame: &mut ratatui::prelude::Frame,

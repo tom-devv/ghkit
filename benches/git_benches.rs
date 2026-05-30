@@ -1,5 +1,5 @@
 use divan::{Bencher, black_box};
-use gkit::git::kit::GRepo;
+use gitkit::git::kit::GRepo;
 
 #[divan::bench]
 fn bench_get_all_commits() {

@@ -1,20 +1,15 @@
 use clap::Parser;
 use crossterm::{
-    event::{
-        self, DisableMouseCapture, EnableMouseCapture, Event, KeyEventKind,
-    },
+    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyEventKind},
     terminal::{self, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use std::{io, panic, time::Duration};
 
-use ratatui::{
-    Terminal,
-    backend::CrosstermBackend,
-};
+use ratatui::{Terminal, backend::CrosstermBackend};
 
 use crate::{
     error::Result,
-    git::kit::GRepo,
+    git::kit::KitRepo,
     tui::{state::TuiState, ui::render},
 };
 
@@ -31,7 +26,7 @@ pub mod metrics;
 pub mod tui;
 
 pub fn run(args: GKitArgs) -> Result<()> {
-    let repo = GRepo::open(args.target_path)?;
+    let repo = KitRepo::open(args.target_path)?;
 
     let mut state = TuiState::new(&repo)?;
 

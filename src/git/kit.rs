@@ -2,14 +2,14 @@ use std::{collections::HashSet, path::Path};
 
 use git2::{Commit, Diff, Error, Oid, Repository};
 
-pub struct GRepo {
+pub struct KitRepo {
     inner: Repository,
 }
 
-impl GRepo {
-    pub fn open<P: AsRef<Path>>(path: P) -> Result<GRepo, Error> {
+impl KitRepo {
+    pub fn open<P: AsRef<Path>>(path: P) -> Result<KitRepo, Error> {
         let repo = Repository::open(path)?;
-        Ok(GRepo { inner: repo })
+        Ok(KitRepo { inner: repo })
     }
 
     pub fn get_all_commits<'a>(&'a self) -> Result<Vec<Commit<'a>>, Error> {

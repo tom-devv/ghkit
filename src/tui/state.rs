@@ -1,6 +1,6 @@
 use crossterm::event::{KeyCode, KeyEvent};
 
-use crate::git::kit::GRepo;
+use crate::git::kit::KitRepo;
 use crate::metrics::cadence::{CadenceData, CadencePage};
 use crate::metrics::overview::{OverviewData, OverviewPage};
 
@@ -17,7 +17,7 @@ pub struct TuiState {
 
 impl TuiState {
     //By default new stats will be loading
-    pub fn new(repo: &GRepo) -> Result<TuiState> {
+    pub fn new(repo: &KitRepo) -> Result<TuiState> {
         let cadence_data = CadenceData::full_report(repo)?;
         let overview_data = OverviewData::default();
         Ok(TuiState {

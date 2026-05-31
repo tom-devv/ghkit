@@ -3,7 +3,7 @@ use std::ops::Index;
 use chrono::{DateTime, TimeDelta, Utc};
 use crossterm::event::{KeyCode, KeyEvent};
 
-use crate::{git::kit::GRepo, tui::ui::draw_placeholder};
+use crate::{git::kit::KitRepo, tui::ui::draw_placeholder};
 
 use ratatui::{
     Frame,
@@ -176,7 +176,7 @@ impl CadencePage {
 }
 
 impl CadenceData {
-    pub fn author_commits_per_week(repo: &GRepo, email: &str) -> Result<u32, git2::Error> {
+    pub fn author_commits_per_week(repo: &KitRepo, email: &str) -> Result<u32, git2::Error> {
         let commit_dates: Vec<DateTime<Utc>> = repo
             .get_author_commits(email)?
             .filter_map(|commit| DateTime::from_timestamp_secs(commit.time().seconds()))
@@ -185,7 +185,7 @@ impl CadenceData {
         Ok(commits_per_week(&commit_dates))
     }
 
-    pub fn global_commits_per_week(repo: &GRepo) -> Result<u32, git2::Error> {
+    pub fn global_commits_per_week(repo: &KitRepo) -> Result<u32, git2::Error> {
         let commit_dates: Vec<DateTime<Utc>> = repo
             .iter_commits()?
             .filter_map(|commit| DateTime::from_timestamp_secs(commit.time().seconds()))
@@ -194,7 +194,7 @@ impl CadenceData {
         Ok(commits_per_week(&commit_dates))
     }
 
-    pub fn full_report(repo: &GRepo) -> Result<Self, git2::Error> {
+    pub fn full_report(repo: &KitRepo) -> Result<Self, git2::Error> {
         let mut cadence = CadenceData {
             global_commits_per_week: Self::global_commits_per_week(repo)?,
             author_commits_per_week: Vec::new(),
